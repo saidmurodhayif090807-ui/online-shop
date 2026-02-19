@@ -1,0 +1,72 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+@mixin text-effect {
+    &:hover {
+        color: brown;
+        border-bottom: 3px solid brown;
+    }
+}
+
+.Navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 200px;
+    text-align: center;
+
+    .brand_name {
+        font-size: 30px;
+        font-weight: 500;
+        line-height: 100%;
+
+        a {
+            color: brown;
+        }
+    }
+
+    .links {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        column-gap: 20px;
+
+        a {
+            color: black;   
+            @include text-effect();
+        }
+    }
+
+    .scrs {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        column-gap: 10px;
+
+        button {
+            border: none;
+            background-color: transparent;
+            max-width: 40px;
+            max-height: 40px;
+            height: 40px;
+            width: 40px;
+            font-weight: 500;
+            cursor: pointer;
+
+            .nav_icons {
+                height: 25px;
+                width: 25px;
+                font-size: 30px;
+                transition: .3s;
+
+                &:hover {
+                    color: brown;
+                }
+            }
+        }
+    }
+}
