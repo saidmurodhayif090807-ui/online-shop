@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import axios from "axios";
 import './Login_Register.scss'
 import Login_Register_img1 from './Login&Register-imgs/Pottery class ❤️.jpg'
 import { NavLink } from 'react-router-dom'
@@ -247,25 +248,84 @@ function Login_Register(props) {
     { "country": "Yemen", "code": "967", "iso": "YE" },
     { "country": "Zambia", "code": "260", "iso": "ZM" },
     { "country": "Zimbabwe", "code": "263", "iso": "ZW" }]
-  const [eye_condition, Seteye_condition] = useState(true)
-  const [eye_condition2, Seteye_condition2] = useState(true)
+  // Api
+  const API_URL = "https://69953de3b081bc23e9c26711.mockapi.io/login"
+
+
+  // register variables
   const [true_confirm, Settrue_confirm] = useState(false)
   const [up_confirm, Setup_confirm] = useState(false)
-  const [up_confirm2, Setup_confirm2] = useState(false)
   const [Username, SetUsername] = useState("")
+  const [Fullname, SetFullname] = useState("")
   const [phone1, Setphone1] = useState("")
   const [phone2, Setphone2] = useState("")
-  const [phone, Setphone] = useState("")
+  const [phone_all, Setphone_all] = useState("")
+  const [email_register, Setemail_register] = useState("")
+  const [password_register, Setpassword_register] = useState("")
+  const [day, Setday] = useState("")
+  const [month, Setmonth] = useState("")
+  const [year, Setyear] = useState("")
+  const [Date_of_birth, SetDate_of_birth] = useState("")
+  // login variables
+  const [eye_condition, Seteye_condition] = useState(true)
+  const [eye_condition2, Seteye_condition2] = useState(true)
+  const [username_login, Setusername_login] = useState("")
+  const [password_login, Setpassword_login] = useState("")
+
+
+
+  //Login functions
+  const handleClick2 = async () => {
+    try {
+      const response = await axios.get(API_URL);
+
+      const users = response.data;
+
+      const foundUser = users.find(
+        (user) =>
+          user.name === username_login &&
+          user.password === password_login
+      );
+
+      if (foundUser) {
+        alert("true");
+      } else {
+        alert("Error: wrong username or password");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Server error");
+    }
+  };
+
+  // Reagister Functions
   const Login_Register_Handle_Click1 = () => {
-    if (Username.length > 3) {
+    if (Username.length > 3 && phone2.length == 9 && phone1 != 0 && email_register.trim().includes("@gmail.com") && email_register.length > 14 && Fullname.length >= 6 && Fullname.length <= 24 && password_register.length > 7 && day.length != 0 && month.length != 0 && year.length == 4) {
       Settrue_confirm(true)
+      Setphone_all(`+${phone1}${phone2}`)
+      SetDate_of_birth(`${day}-${month}-${year}`)
     } else {
       Setup_confirm(true)
     }
   }
-  const Login_Register_number = (e, i) => {
-    Setphone(``)
-  }
+  const Register = async () => {
+    try {
+      const response = await axios.post(API_URL, {
+        name: Username,
+        password: password_register,
+        email: email_register,
+        phonenumber: phone_all,
+        fullname: Fullname,
+        birthday: Date_of_birth,
+        productId: "",
+      });
+      console.log("Saved:", response.data);
+      alert("User saved!");
+    } catch (error) {
+      console.error(error);
+      alert("Error saving user");
+    }
+  };
   return (
     <div className='Login_Register'>
       <div className="top">
@@ -280,12 +340,16 @@ function Login_Register(props) {
           <h1 className='login_name'><CiUser className='login_name_icon' />Login</h1>
           <div className="input input1">
             <div className="k">Username or email address <span>*</span></div>
-            <input type="text" className="textarea" required />
+            <input type="text" className="textarea" required onChange={(e) => {
+              Setusername_login(e.target.value);
+            }} />
           </div>
           <div className="input input2">
             <div className="k">Password <span>*</span></div>
-            <input type={eye_condition ? "password" : "text"} className="textarea" required />
-            <button onClick={() => {
+            <input type={eye_condition ? "password" : "text"} className="textarea" required onChange={(e) => {
+              Setpassword_login(e.target.value);
+            }} />
+            <button onClick={(e) => {
               Seteye_condition(!eye_condition)
             }}>{eye_condition ? <FaEye /> : <FaEyeSlash />}</button>
           </div>
@@ -296,7 +360,9 @@ function Login_Register(props) {
             </label>
             <a href="">Lost your password?</a>
           </div>
-          <button className='final'>Login</button>
+          <button className='final' onClick={() => {
+            handleClick2()
+          }}>Login</button>
         </section>
         <section className="account register">
           <h1 className='login_name'><BiDownArrowCircle className='login_name_icon' />Register</h1>
@@ -307,36 +373,107 @@ function Login_Register(props) {
             }} className="textarea" required />
             <p className='feedback'>{up_confirm ? <p>username should be more than 3 letters</p> : <></>}</p>
           </div>
+          <div className="input input1">
+            <div className="k">Fullname <span>*</span></div>
+            <input type="text" onChange={(e) => {
+              SetFullname(e.target.value)
+            }} className="textarea" required />
+            <p className='feedback'>{up_confirm ? <p>Fullname between 6-24 letters</p> : <></>}</p>
+          </div>
           <div className="input input3">
             <div className="k">Phone number <span>*</span></div>
             <div className="both">
-              <select>
+              <select onChange={(e) => {
+                Setphone1(e.target.value)
+              }}>
+                <option value="1"></option>
                 {countries.map((country) => (
-                  <option onClick={() => {
-                    Setphone1(`${country.code}`)
-                  }} key={country.iso} value={country.iso}>
+                  <option key={country.iso} value={country.code}>
                     {country.iso} ({country.code})
                   </option>
                 ))}
               </select>
-              <input type="number" className="textarea" onSubmit={() => {
-                // !
+              <input type="number" className="textarea" onChange={(e) => {
+                Setphone2(e.target.value)
               }} required />
             </div>
-            <p className='feedback'>{up_confirm ? <p>phone number should be more than 3 numbers</p> : <></>}</p>
+            <p className='feedback'>{up_confirm ? <p>choose your country</p> : <></>}</p>
+            <p className='feedback'>{up_confirm ? <p>phone number should equals 9 numbers</p> : <></>}</p>
           </div>
           <div className="input input1">
             <div className="k">Email address <span>*</span></div>
-            <input type="email" className="textarea" required />
+            <input type="email" className="textarea" required onChange={(e) => {
+              Setemail_register(e.target.value)
+            }} />
+            <p className='feedback'>{up_confirm ? <p>email should more than 14 letters and "gmail.com" in the end</p> : <></>}</p>
+          </div>
+          <div className="input input3 outsider">
+            <div className="k">Date of birth<span>*</span></div>
+            <div className="combined2">
+              <select onChange={(e) => Setday(e.target.value)} name="" id="">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+                <option value="25">25</option>
+                <option value="26">26</option>
+                <option value="27">27</option>
+                <option value="28">28</option>
+                <option value="29">29</option>
+                <option value="30">30</option>
+                <option value="31">31</option>
+              </select>
+              <select onChange={(e) => Setmonth(e.target.value)} name="" id="">
+                <option value="January">1</option>
+                <option value="February">2</option>
+                <option value="March">3</option>
+                <option value="April">4</option>
+                <option value="May">5</option>
+                <option value="June">6</option>
+                <option value="July">7</option>
+                <option value="August">8</option>
+                <option value="September">9</option>
+                <option value="October">10</option>
+                <option value="November">11</option>
+                <option value="December">12</option>
+              </select>
+              <input type="number" placeholder='Year' className="textarea" required onChange={(e) => { Setyear(e.target.value) }} />
+            </div>
+            <p className='feedback'>{up_confirm ? <p>fill your birth fully</p> : <></>}</p>
           </div>
           <div className="input input2">
             <div className="k">Password <span>*</span></div>
-            <input type={eye_condition2 ? "password" : "text"} className="textarea" required />
+            <input type={eye_condition2 ? "password" : "text"} onClick={(e) => {
+              Setpassword_register(e.target.value)
+            }} className="textarea" required />
             <button onClick={() => {
               Seteye_condition2(!eye_condition2)
             }}>{eye_condition2 ? <FaEye /> : <FaEyeSlash />}</button>
+            <p className='feedback'>{up_confirm ? <p>email should more than 7 letters also includes numbers</p> : <></>}</p>
           </div>
-          {true_confirm ? <button className='final'>Register</button> : <button onClick={() => {
+          {true_confirm ? <button className='final' onClick={() => {
+            Register()
+          }}>Register</button> : <button onClick={() => {
             Login_Register_Handle_Click1()
           }} className='final'>Confirm</button>}
         </section>

@@ -76,7 +76,7 @@
             }
 
             &.register {
-                height: 700px;
+                // height: 700px;
             }
 
             &.login,
@@ -187,7 +187,20 @@
                         @include text-effect();
                     }
                 }
-
+                .combined2{
+                    display: flex;
+                    align-items: self-end;
+                    justify-content: center;
+                    select{
+                        width: 40px;
+                        height: 40px;
+                        border-right: none;
+                        border-radius: 4px;
+                    }
+                    input{
+                        max-width: 320px;
+                    }
+                }
                 .final {
                     width: 400px;
                     background: black;
